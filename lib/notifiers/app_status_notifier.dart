@@ -10,3 +10,4 @@ class AppStatusNotifier extends ChangeNotifier {
     notifyListeners();
   }
 }
+

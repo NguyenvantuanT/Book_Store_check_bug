@@ -160,19 +160,19 @@ class AccessInfo {
 
 class Pdf {
   bool? isAvailable;
-  String? downloadLink;
+  String? acsTokenLink;
 
-  Pdf({this.isAvailable, this.downloadLink});
+  Pdf({this.isAvailable, this.acsTokenLink});
 
   Pdf.fromJson(Map<String, dynamic> json) {
     isAvailable = json["isAvailable"];
-    downloadLink = json["downloadLink"];
+    acsTokenLink = json["acsTokenLink"];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data["isAvailable"] = isAvailable;
-    data["downloadLink"] = downloadLink;
+    data["acsTokenLink"] = acsTokenLink;
     return data;
   }
 }

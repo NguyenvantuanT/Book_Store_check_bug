@@ -1,4 +1,5 @@
 import 'package:book_app/pages/book_show/detail_book.dart';
+import 'package:book_app/pages/book_show/pdf_screen.dart';
 import 'package:book_app/pages/home_page.dart';
 import 'package:book_app/themes/app_colors.dart';
 import 'package:flutter/material.dart';
@@ -18,11 +19,12 @@ int selectIndex = 0;
     return Scaffold(
       backgroundColor: AppColors.bgColor,
       body: PageView(
+        physics: const NeverScrollableScrollPhysics(),
         controller: _pageController,
-        children: [
+        children:const [
           HomePage(),
           DetailBook(),
-          Container(),
+          PdfScreen(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(

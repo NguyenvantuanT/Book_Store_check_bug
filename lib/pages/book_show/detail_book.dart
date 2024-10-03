@@ -1,6 +1,7 @@
 import 'package:book_app/components/app_button.dart';
 import 'package:book_app/models/book_model.dart';
 import 'package:book_app/notifiers/app_notifier.dart';
+import 'package:book_app/pages/book_show/pdf_screen.dart';
 import 'package:book_app/themes/app_colors.dart';
 import 'package:book_app/utils/app_extension.dart';
 import 'package:flutter/material.dart';
@@ -30,6 +31,8 @@ class _DetailBookState extends State<DetailBook> {
                   future: value.showBookData(id: widget.id ?? ""),
                   builder: (context, snapshot) {
                     final item = snapshot.data?.volumeInfo;
+                    String pathPDF =
+                        snapshot.data?.accessInfo?.pdf?.acsTokenLink ?? "";
                     return SingleChildScrollView(
                         child: Column(
                       children: [
@@ -39,7 +42,8 @@ class _DetailBookState extends State<DetailBook> {
                               height: height,
                               width: width,
                               margin: const EdgeInsets.only(top: 167),
-                              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20.0),
                               decoration: BoxDecoration(
                                   color: AppColors.bgColor,
                                   borderRadius: const BorderRadius.only(
@@ -49,7 +53,8 @@ class _DetailBookState extends State<DetailBook> {
                               child: Column(
                                 children: [
                                   const SizedBox(height: 110),
-                                  _buildBody(height, width, item, context),
+                                  _buildBody(
+                                      height, width, item, context, pathPDF),
                                 ],
                               ),
                             ),
@@ -105,8 +110,8 @@ class _DetailBookState extends State<DetailBook> {
     );
   }
 
-  Widget _buildBody(
-      double height, double width, VolumeInfo? item, BuildContext context) {
+  Widget _buildBody(double height, double width, VolumeInfo? item,
+      BuildContext context, String pathPDF) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -159,6 +164,17 @@ class _DetailBookState extends State<DetailBook> {
           children: [
             AppButton(
               text: "VIEW ONLINE",
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PdfScreen(
+                      linkPdfBook: pathPDF,
+                      nameBook: item?.title,
+                    ),
+                  ),
+                );
+              },
             ),
             AppButton(
               icon: Icon(
@@ -284,18 +300,6 @@ class _DetailBookState extends State<DetailBook> {
               .textTheme
               .displayLarge!
               .copyWith(fontSize: 18.0),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildBgHeard() {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.bgColor,
-        borderRadius: const BorderRadius.only(
-          topRight: Radius.circular(30),
-          topLeft: Radius.circular(30),
         ),
       ),
     );
