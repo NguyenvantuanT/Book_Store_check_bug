@@ -21,48 +21,60 @@ class _DetailBookState extends State<DetailBook> {
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
-    final data = Provider.of<AppNotifier>(context);
     return Scaffold(
-      body: FutureBuilder(
-          future: data.showBookData(id: widget.id ?? ""),
-          builder: (context, snapshot) {
-            final item = snapshot.data?.volumeInfo;
-            return SingleChildScrollView(
-              child: Column(
-                children: [
-                  Stack(
-                    children: [
-                      Container(
-                        height: height,
-                        width: width,
-                        color: AppColors.yellow,
-                      ),
-                      Positioned(
-                        top: 200,
-                        left: 0,
-                        bottom: 0,
-                        right: 0,
-                        child: _buildBgHeard(),
-                      ),
-                      Positioned(
-                        top: 120,
-                        left: 0,
-                        right: 0,
-                        child: _buildBody(height, width, item, context),
-                      )
-                    ],
-                  ),
-                ],
-              ),
-            );
-          }),
+      backgroundColor: AppColors.primaryC,
+      body: Consumer<AppNotifier>(
+        builder: ((context, value, child) {
+          return widget.id != null
+              ? FutureBuilder(
+                  future: value.showBookData(id: widget.id ?? ""),
+                  builder: (context, snapshot) {
+                    final item = snapshot.data?.volumeInfo;
+                    return SingleChildScrollView(
+                        child: Column(
+                      children: [
+                        Stack(
+                          children: [
+                            Container(
+                              height: height,
+                              width: width,
+                              margin: const EdgeInsets.only(top: 167),
+                              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                              decoration: BoxDecoration(
+                                  color: AppColors.bgColor,
+                                  borderRadius: const BorderRadius.only(
+                                    topLeft: Radius.circular(20.0),
+                                    topRight: Radius.circular(20.0),
+                                  )),
+                              child: Column(
+                                children: [
+                                  const SizedBox(height: 110),
+                                  _buildBody(height, width, item, context),
+                                ],
+                              ),
+                            ),
+                            Positioned(
+                              top: 70.0,
+                              left: 0,
+                              right: 0,
+                              child: _buildImage(height, width, item),
+                            )
+                          ],
+                        ),
+                      ],
+                    ));
+                  })
+              : const Center(
+                  child: Text("Opps No Data Found!"),
+                );
+        }),
+      ),
     );
   }
 
-  Widget _buildBody(
-      double height, double width, VolumeInfo? item, BuildContext context) {
+  Widget _buildImage(double height, double width, VolumeInfo? item) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Container(
           height: height / 4,
@@ -81,13 +93,31 @@ class _DetailBookState extends State<DetailBook> {
             borderRadius: BorderRadius.circular(20),
             child: Image(
                 fit: BoxFit.cover,
-                image: NetworkImage(item?.imageLinks?.thumbnail ?? "")),
+                image: NetworkImage(item?.imageLinks?.thumbnail ?? ""),
+                errorBuilder: (_, __, ___) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }),
           ),
         ),
-        const SizedBox(height: 20),
-        Text(
-          item?.title ?? "No Name Book",
-          style: Theme.of(context).textTheme.displayLarge,
+      ],
+    );
+  }
+
+  Widget _buildBody(
+      double height, double width, VolumeInfo? item, BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        SizedBox(
+          width: double.infinity,
+          child: Text(
+            item?.title ?? "No Name Book",
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.displayLarge,
+          ),
         ),
         Text(
           (item?.authors?[0] ?? "Censored").toUpperCase(),
@@ -102,22 +132,19 @@ class _DetailBookState extends State<DetailBook> {
               item?.printType ?? "Book",
               style: Theme.of(context).textTheme.bodyLarge,
             ),
-            Padding(
-              padding: const EdgeInsets.only(left: 20.0),
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 9.0, vertical: 5.0),
-                decoration: BoxDecoration(
-                  color: AppColors.black,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  (item?.pageCount ?? 0).toVND,
-                  style: Theme.of(context)
-                      .textTheme
-                      .labelLarge!
-                      .copyWith(color: AppColors.bgColor),
-                ),
+            Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 9.0, vertical: 5.0),
+              decoration: BoxDecoration(
+                color: AppColors.black,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(
+                (item?.pageCount ?? 0).toVND,
+                style: Theme.of(context)
+                    .textTheme
+                    .labelLarge!
+                    .copyWith(color: AppColors.bgColor),
               ),
             ),
             Text(
@@ -143,22 +170,20 @@ class _DetailBookState extends State<DetailBook> {
           ],
         ),
         _buildTitle(context, "Details"),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-          child: _showDoc(context, item),
-        ),
+        _showDoc(context, item),
         _buildTitle(context, "Description"),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 20.0),
-          child: ReadMoreText(
-            item?.description ?? "No Description",
-            trimLines: 6,
-            colorClickableText: AppColors.black,
-            trimMode: TrimMode.Line,
-            trimCollapsedText: '...Read More',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(fontSize: 14),
-            trimExpandedText: ' Less',
-          ),
+        ReadMoreText(
+          item?.description ?? "No Description",
+          trimLines: 6,
+          colorClickableText: AppColors.black,
+          trimMode: TrimMode.Line,
+          trimCollapsedText: '...Read More',
+          style: Theme.of(context)
+              .textTheme
+              .titleLarge
+              ?.copyWith(fontSize: 15)
+              .copyWith(color: AppColors.grey),
+          trimExpandedText: ' Less',
         ),
       ],
     );
@@ -211,6 +236,7 @@ class _DetailBookState extends State<DetailBook> {
             children: [
               Text(
                 item?.authors?[0] ?? "No Auhtor Value",
+                maxLines: 1,
                 style: Theme.of(context)
                     .textTheme
                     .titleLarge!
@@ -218,6 +244,7 @@ class _DetailBookState extends State<DetailBook> {
               ),
               Text(
                 item?.publisher ?? "No Publisher",
+                maxLines: 1,
                 style: Theme.of(context)
                     .textTheme
                     .titleLarge!
@@ -225,6 +252,7 @@ class _DetailBookState extends State<DetailBook> {
               ),
               Text(
                 item?.publishedDate ?? "No Publisher Data",
+                maxLines: 1,
                 style: Theme.of(context)
                     .textTheme
                     .titleLarge!
@@ -232,6 +260,7 @@ class _DetailBookState extends State<DetailBook> {
               ),
               Text(
                 item?.categories?[0] ?? "No Categories",
+                maxLines: 1,
                 style: Theme.of(context)
                     .textTheme
                     .titleLarge!
