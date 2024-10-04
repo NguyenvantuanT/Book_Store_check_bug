@@ -1,50 +1,58 @@
 import 'package:book_app/components/app_button.dart';
-import 'package:book_app/notifiers/app_notifier.dart';
+import 'package:book_app/notifiers/app_pdf_notifier.dart';
 import 'package:book_app/themes/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:provider/provider.dart';
 
 class PdfScreen extends StatelessWidget {
-  const PdfScreen({
-    super.key,
-    this.nameBook,
-    this.linkPdfBook,
-  });
-
-  final String? nameBook;
-  final String? linkPdfBook;
-
+  const PdfScreen({super.key, this.name});
+  final String? name;
   @override
   Widget build(BuildContext context) {
-    String uri =
-        "https://books.googleusercontent.com/books/content?req=AKW5Qaf0ECRFIP1doYH9mZSxPMFZmFroJhLWm-uofPS9ScRBRJRPrYA-lCaUBRmj6Du5Kpce6veTviamR3ZEQ_XcLH09YzgKjWHi53qdmmIvih5hk67iduZI6fIlAeKRHTwdOHr3gEFvSo-R5ThelPbtG4FFfYYUn9TQ3cn3uuufni48crG06oTochcp3u3Szm8meDbwNRnt65t6ZmCw6tzRycp5jsT_oCu4wZ_ipNYrOsQ824nfPZPuMw2KL__LbBqyCC6bmgmQuGPdPAWVLZURbp9w2De3Sw";
+    String pdfUrl =
+        "https://books.googleusercontent.com/books/content?req=AKW5QadUMAi33KignSUr_96jr7aH6j6lTdgEGqDowCjlA7WdZBLqYWeG2e_pGcqL_R9fVq1TWeqUwuwt1t5UpFoGzrV1PxpL9Dc3A4CQiUdD8gnhPu4vIj3j5Fbg7lefSw_t5gUX3-EBKXOIciAlEeacbBIkfcwMO77bOB--yQ_raFZgZNfdgXNw1tdeP-XmN6VZScVlIpB5wuXNZwhUdPMGqGMxqOwRlE-QJ74SNVYcFX4m8g6p7GmrM2KEwRQUvAGe4M-WPl8p4QWkuMLEvd3wzUzYs79oSg";
     return Scaffold(
       backgroundColor: AppColors.bgColor,
-      appBar: AppBar(
-        title: Text(nameBook ?? "No Name"),
-      ),
-      body: Consumer<AppNotifier>(builder: (context, value, child) {
-        return linkPdfBook != null
-            ? PDFView(
-                filePath: value.filePath,
-                enableSwipe: true, 
-                swipeHorizontal: true, 
-                autoSpacing: true, 
-                pageSnap: true, 
-                onPageChanged: (int? page, int? total) {
-                  print('Trang: $page/$total');
-                },
-              )
-            : Center(
-                child: AppButton(
-                  text: "Download PDF",
-                  onTap: () {
-                    value.getPDFBook(uri: uri);
-                  },
-                ),
-              );
-      }),
-    );
+        appBar: AppBar(
+          title: Text(
+            name ?? "PDF Viewer",
+            style: Theme.of(context).textTheme.displayLarge,
+          ),
+        ),
+        body: Consumer<AppPdfNotifier>(
+          builder: (context, value, child) {
+            return value.filePath != null
+                ? Stack(
+                    children: [
+                      Expanded(
+                        child: PDFView(
+                          filePath: value.filePath,
+                          enableSwipe: true,
+                          swipeHorizontal: true,
+                          autoSpacing: true,
+                          pageSnap: true,
+                          onPageChanged: (int? page, int? total) {
+                            value.getPage(total, page);
+                          },
+                        ),
+                      ),
+                      Positioned(
+                        right: 40.0,
+                        bottom: 40.0,
+                        child: Row(
+                          children: [
+                            Text("${value.page}/${value.total}"),
+                          ],
+                        ),
+                      )
+                    ],
+                  )
+                : AppButton(
+                    text: "Download Book PDF",
+                    onTap: () async => await value.downloadPDF(pdfUrl),
+                  );
+          },
+        ));
   }
 }

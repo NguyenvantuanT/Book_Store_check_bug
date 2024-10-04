@@ -22,8 +22,8 @@ int selectIndex = 0;
         physics: const NeverScrollableScrollPhysics(),
         controller: _pageController,
         children:const [
-          HomePage(),
-          DetailBook(),
+           HomePage(),
+           DetailBook(),
           PdfScreen(),
         ],
       ),

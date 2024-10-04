@@ -169,8 +169,6 @@ class _DetailBookState extends State<DetailBook> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => PdfScreen(
-                      linkPdfBook: pathPDF,
-                      nameBook: item?.title,
                     ),
                   ),
                 );

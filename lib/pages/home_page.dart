@@ -54,15 +54,14 @@ class _HomePageState extends State<HomePage>
             return [
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0,vertical: 10.0),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 20.0, vertical: 10.0),
                   child: Text(
                     "Book Store",
-                    style: TextStyle(
-                      color: AppColors.black,
-                      fontSize: 20.0,
-                    ),
+                    style: Theme.of(context).textTheme.headlineLarge,
                   ),
-                ),              ),
+                ),
+              ),
               SliverAppBar(
                   backgroundColor: AppColors.bgColor,
                   expandedHeight: 20.0,
@@ -72,20 +71,23 @@ class _HomePageState extends State<HomePage>
                 pinned: true,
                 delegate: MyDelegate(
                   tabBar: TabBar(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20.0, vertical: 6.0),
+                    indicator: BoxDecoration(
+                      color: AppColors.primaryC,
+                      border: Border.all(color: AppColors.discount, width: 1.2),
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
                     tabAlignment: TabAlignment.center,
                     controller: tabController,
-                    // dividerColor: Colors.transparent,
-                    indicatorColor: AppColors.primaryD,
+                    indicatorColor: Colors.transparent,
                     isScrollable: true,
                     labelStyle: TextStyle(
-                      color: AppColors.primaryD,
-                      fontSize: 17,
-                      fontWeight: FontWeight.w600,
-                    ),
+                        color: AppColors.textColor,
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.normal),
                     unselectedLabelStyle: TextStyle(
                       color: AppColors.grey.withOpacity(0.7),
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
                     ),
                     tabs: tab,
                   ),
@@ -94,7 +96,6 @@ class _HomePageState extends State<HomePage>
             ];
           },
           body: TabBarView(
-            physics: const AlwaysScrollableScrollPhysics(),
             controller: tabController,
             children: List.generate(4, (index) => const StatusBook()),
           ),
@@ -111,7 +112,7 @@ class MyDelegate extends SliverPersistentHeaderDelegate {
   @override
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return Container(height: 40, color: AppColors.bgColor, child: tabBar);
+    return Container(height: 45, color: AppColors.bgColor, child: tabBar);
   }
 
   @override
@@ -126,7 +127,7 @@ class MyDelegate extends SliverPersistentHeaderDelegate {
   }
 }
 
-List<Tab> tab = const [
+List<Widget> tab = const [
   Tab(text: "Anime", height: 20),
   Tab(text: "Adventure", height: 20),
   Tab(text: "Novel", height: 20),

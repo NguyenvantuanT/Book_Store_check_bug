@@ -1,4 +1,5 @@
 import 'package:book_app/notifiers/app_notifier.dart';
+import 'package:book_app/notifiers/app_pdf_notifier.dart';
 import 'package:book_app/notifiers/app_status_notifier.dart';
 import 'package:book_app/pages/root_page.dart';
 import 'package:book_app/themes/app_colors.dart';
@@ -16,6 +17,7 @@ void main() {
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider<AppNotifier>(create: (context) => AppNotifier()),
     ChangeNotifierProvider<AppStatusNotifier>(create: (context) => AppStatusNotifier()),
+    ChangeNotifierProvider<AppPdfNotifier>(create: (context) => AppPdfNotifier()),
   ], child: const MyApp()));
 }
 
@@ -30,7 +32,7 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
           textTheme: ThemeText().textThemes,
           appBarTheme: AppBarTheme(
-            backgroundColor: AppColors.bgColor,
+            backgroundColor: AppColors.primaryC,
             elevation: 0,
             titleTextStyle: const TextStyle(color: Colors.black, fontSize: 22),
           )),

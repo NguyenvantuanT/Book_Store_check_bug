@@ -15,8 +15,8 @@ class AppSearchBox extends StatelessWidget {
         height: 45.0,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: AppColors.bgColor,
-          border: Border.all(color: AppColors.grey,width: 0.8),
+          color: AppColors.primaryC,
+          border: Border.all(color: AppColors.primaryC,width: 0.8),
           borderRadius: BorderRadius.circular(15.0),
           boxShadow: [
             BoxShadow(
@@ -30,11 +30,11 @@ class AppSearchBox extends StatelessWidget {
           controller: controller,
           onChanged: onChange,
           decoration: InputDecoration(
-            contentPadding: const EdgeInsets.symmetric(horizontal: 10.0,vertical: 8.0),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 10.0,vertical: 6.0),
             border: InputBorder.none,
-            hintText: "Search for book",
-            hintStyle: TextStyle(color: AppColors.grey, fontSize: 15),
-            suffixIcon: Icon(Icons.search, color: AppColors.grey,),
+            hintText: "What are you looking for ?",
+            hintStyle: Theme.of(context).textTheme.headlineSmall!.copyWith(color: AppColors.grey),
+            suffixIcon: Icon(Icons.search, color: AppColors.textColor,),
           ),
         ),
       ),

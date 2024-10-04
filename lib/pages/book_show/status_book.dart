@@ -37,30 +37,38 @@ class StatusBook extends StatelessWidget {
             if (snapshot.hasData && snapshot.data?.items != null) {
               return ListView.separated(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 20.0,
                     vertical: 10.0,
-                  ),
+                  ).copyWith(left: 20.0, right: 8.0),
                   // physics: const NeverScrollableScrollPhysics(),
                   // shrinkWrap: true,
                   separatorBuilder: (_, __) => const SizedBox(height: 20),
                   itemCount: snapshot.data!.items!.length,
                   itemBuilder: (context, index) {
                     var item = snapshot.data!.items![index];
-                    return GestureDetector(
-                      onTap: () => _showDetail(context, item.id ?? ""),
-                      child: SizedBox(
-                        height: size.height / 4,
-                        child: Row(
-                          children: [
-                            _buildImage(size, item),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 20.0, vertical: 40.0),
-                                child: _buildTitle(item),
+                    return Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10.0, vertical: 10.0),
+                      height: size.height / 4,
+                      width: size.width,
+                      decoration: BoxDecoration(
+                          color: AppColors.textForBG,
+                          borderRadius: BorderRadius.circular(15.0)),
+                      child: GestureDetector(
+                        onTap: () => _showDetail(context, item.id ?? ""),
+                        child: SizedBox(
+                          height: size.height / 4,
+                          child: Row(
+                            children: [
+                              _buildImage(size, item),
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20.0, vertical: 40.0),
+                                  child: _buildTitle(context, item),
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     );
@@ -84,19 +92,14 @@ class StatusBook extends StatelessWidget {
     );
   }
 
-  Widget _buildTitle(Items item) {
+  Widget _buildTitle(BuildContext context, Items item) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(
-          item.volumeInfo?.title ?? "No title available",
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-              color: AppColors.black,
-              fontSize: 15,
-              fontWeight: FontWeight.w500),
-        ),
+        Text(item.volumeInfo?.title ?? "No title available",
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.headlineMedium),
         Text(
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
@@ -104,13 +107,13 @@ class StatusBook extends StatelessWidget {
           style: TextStyle(
               color: AppColors.blue, fontSize: 13, fontWeight: FontWeight.w400),
         ),
-        const SizedBox(height: 20.0),
-        Text(
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          "\$ ${(item.volumeInfo?.pageCount ?? 0).toVND}",
-          style: TextStyle(
-              color: AppColors.grey, fontSize: 15, fontWeight: FontWeight.w400),
+        Expanded(
+          child: Text(
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            "\$ ${(item.volumeInfo?.pageCount ?? 0).toVND}",
+            style: Theme.of(context).textTheme.headlineSmall,
+          ),
         ),
       ],
     );
@@ -133,6 +136,9 @@ class StatusBook extends StatelessWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(12),
         child: Image(
+          errorBuilder: (_, __, ___) => const Center(
+            child: CircularProgressIndicator(),
+          ),
           image: NetworkImage(
             item.volumeInfo?.imageLinks?.thumbnail ?? "",
           ),
