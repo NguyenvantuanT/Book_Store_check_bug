@@ -121,13 +121,13 @@ class _DetailBookState extends State<DetailBook> {
           child: Text(
             item?.title ?? "No Name Book",
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.displayLarge,
+            style: Theme.of(context).textTheme.headlineLarge!.copyWith(fontSize: 20),
           ),
         ),
         Text(
           (item?.authors?[0] ?? "Censored").toUpperCase(),
           textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.titleLarge,
+          style: Theme.of(context).textTheme.headlineMedium,
         ),
         const SizedBox(height: 15),
         Row(
@@ -168,8 +168,7 @@ class _DetailBookState extends State<DetailBook> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => PdfScreen(
-                    ),
+                    builder: (context) =>const PdfScreen(),
                   ),
                 );
               },
@@ -195,8 +194,7 @@ class _DetailBookState extends State<DetailBook> {
           style: Theme.of(context)
               .textTheme
               .titleLarge
-              ?.copyWith(fontSize: 15)
-              .copyWith(color: AppColors.grey),
+              ?.copyWith(fontSize: 15, color: AppColors.grey),
           trimExpandedText: ' Less',
         ),
       ],

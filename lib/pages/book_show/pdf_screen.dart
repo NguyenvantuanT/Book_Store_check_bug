@@ -13,7 +13,7 @@ class PdfScreen extends StatelessWidget {
     String pdfUrl =
         "https://books.googleusercontent.com/books/content?req=AKW5QadUMAi33KignSUr_96jr7aH6j6lTdgEGqDowCjlA7WdZBLqYWeG2e_pGcqL_R9fVq1TWeqUwuwt1t5UpFoGzrV1PxpL9Dc3A4CQiUdD8gnhPu4vIj3j5Fbg7lefSw_t5gUX3-EBKXOIciAlEeacbBIkfcwMO77bOB--yQ_raFZgZNfdgXNw1tdeP-XmN6VZScVlIpB5wuXNZwhUdPMGqGMxqOwRlE-QJ74SNVYcFX4m8g6p7GmrM2KEwRQUvAGe4M-WPl8p4QWkuMLEvd3wzUzYs79oSg";
     return Scaffold(
-      backgroundColor: AppColors.bgColor,
+        backgroundColor: AppColors.bgColor,
         appBar: AppBar(
           title: Text(
             name ?? "PDF Viewer",
@@ -25,7 +25,9 @@ class PdfScreen extends StatelessWidget {
             return value.filePath != null
                 ? Stack(
                     children: [
-                      Expanded(
+                      SizedBox(
+                        width: double.infinity,
+                        height: double.infinity,
                         child: PDFView(
                           filePath: value.filePath,
                           enableSwipe: true,
@@ -50,7 +52,9 @@ class PdfScreen extends StatelessWidget {
                   )
                 : AppButton(
                     text: "Download Book PDF",
-                    onTap: () async => await value.downloadPDF(pdfUrl),
+                    onTap: () async {
+                      await value.downloadPDF(pdfUrl);
+                    },
                   );
           },
         ));

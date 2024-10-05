@@ -64,15 +64,20 @@ class _HomePageState extends State<HomePage>
               ),
               SliverAppBar(
                   backgroundColor: AppColors.bgColor,
-                  expandedHeight: 20.0,
                   flexibleSpace: const AppSearchBox()),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 20.0).copyWith(bottom: 10.0),
+                  child: Text("Top Sellers" , style: Theme.of(context).textTheme.headlineMedium,),
+                ),
+              ),
               SliverPersistentHeader(
                 floating: true,
                 pinned: true,
                 delegate: MyDelegate(
                   tabBar: TabBar(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20.0, vertical: 6.0),
+                    dividerColor: Colors.transparent,
                     indicator: BoxDecoration(
                       color: AppColors.primaryC,
                       border: Border.all(color: AppColors.discount, width: 1.2),
@@ -97,13 +102,14 @@ class _HomePageState extends State<HomePage>
           },
           body: TabBarView(
             controller: tabController,
-            children: List.generate(4, (index) => const StatusBook()),
+            children: List<Widget>.generate(4, (index) => const StatusBook()),
           ),
         ),
       ),
     );
   }
 }
+
 
 class MyDelegate extends SliverPersistentHeaderDelegate {
   MyDelegate({required this.tabBar});
@@ -112,7 +118,7 @@ class MyDelegate extends SliverPersistentHeaderDelegate {
   @override
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return Container(height: 45, color: AppColors.bgColor, child: tabBar);
+    return Container(height: 100.0, color: AppColors.bgColor, child: tabBar);
   }
 
   @override
@@ -128,8 +134,32 @@ class MyDelegate extends SliverPersistentHeaderDelegate {
 }
 
 List<Widget> tab = const [
-  Tab(text: "Anime", height: 20),
-  Tab(text: "Adventure", height: 20),
-  Tab(text: "Novel", height: 20),
-  Tab(text: "Horror", height: 20),
+  Tab(
+    height: 50.0,
+    child: Padding(
+      padding: EdgeInsets.symmetric(horizontal: 15.0,vertical: 10.0),
+      child: Text("Anime" , style: TextStyle(fontSize: 16.0),),
+    ),
+  ),
+  Tab(
+    height: 50.0,
+    child: Padding(
+      padding: EdgeInsets.symmetric(horizontal: 15.0,vertical: 10.0),
+      child: Text("Adventure" , style: TextStyle(fontSize: 16.0),),
+    ),
+  ),
+  Tab(
+    height: 50.0,
+    child: Padding(
+      padding: EdgeInsets.symmetric(horizontal: 15.0,vertical: 10.0),
+      child: Text("Novel" , style: TextStyle(fontSize: 16.0),),
+    ),
+  ),
+  Tab(
+    height: 50.0,
+    child: Padding(
+      padding: EdgeInsets.symmetric(horizontal: 15.0,vertical: 10.0),
+      child: Text("Horror" , style: TextStyle(fontSize: 16.0),),
+    ),
+  ),
 ];
