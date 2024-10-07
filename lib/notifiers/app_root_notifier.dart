@@ -19,14 +19,13 @@ class AppRootNotifier extends ChangeNotifier {
   Future<Widget>? getPage(int index) async {
     if (_pageCache.length <= index || _pageCache[index] == null) {
       _loadingStates[index] = true;
-      notifyListeners();
       
       await Future.delayed(const Duration(milliseconds: 100));
       
       Widget page;
       switch (index) {
         case 0:
-          page = const HomePage();
+          page = const HomePageP();
           break;
         case 1:
           page = const ExploreScreen();

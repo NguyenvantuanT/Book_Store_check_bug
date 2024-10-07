@@ -9,8 +9,7 @@ class BookService {
 
   BookService({
     http.Client? client,
-  }) : 
-       _client = client ?? http.Client();
+  }) : _client = client ?? http.Client();
 
   Future<List<Book>> fetchBooks({
     required String query,
@@ -18,23 +17,23 @@ class BookService {
     int maxResults = 20,
   }) async {
     try {
-      final response = await _client.get(
-        Uri.parse('$baseUrl?q=$query&startIndex=$startIndex&maxResults=$maxResults'),
-      ).timeout(
-        const Duration(seconds: 10),
-        onTimeout: () => throw Exception('Connection timeout'),
-      );
+      final response = await _client
+          .get(
+            Uri.parse(
+                '$baseUrl?q=$query&startIndex=$startIndex&maxResults=$maxResults'),
+          )
+          .timeout(
+            const Duration(seconds: 10),
+            onTimeout: () => throw Exception('Connection timeout'),
+          );
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         if (data['items'] == null) return [];
 
-        final List<Book> books = (data['items'] as List)
-            .map((item) => Book.fromJson(item))
-            .toList();
-
-        // Cache the results
-        
+        final List<Book> books =
+            (data['items'] as List).map((item) => Book.fromJson(item)).toList();
+            
         return books;
       } else {
         throw Exception('Failed to load books');

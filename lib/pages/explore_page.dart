@@ -1,8 +1,10 @@
 // lib/screens/explore_screen.dart
 import 'dart:async';
 
+import 'package:book_app/components/app_search_box.dart';
 import 'package:book_app/models/book_exlpore._model.dart';
 import 'package:book_app/notifiers/app_book_explore.dart';
+import 'package:book_app/pages/book_show/detail_book.dart';
 import 'package:book_app/services/book_services.dart';
 import 'package:book_app/themes/app_colors.dart';
 import 'package:flutter/material.dart';
@@ -22,61 +24,38 @@ class ExploreScreen extends StatelessWidget {
   }
 }
 
-class ExploreView extends StatelessWidget {
+class ExploreView extends StatefulWidget {
   const ExploreView({super.key});
+
+  @override
+  State<ExploreView> createState() => _ExploreViewState();
+}
+
+class _ExploreViewState extends State<ExploreView> {
+  final _debouncer = Debouncer(milliseconds: 1000);
+
+  final _controller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.bgColor,
       appBar: AppBar(
+        backgroundColor: AppColors.bgColor,
         title: const Text('Explore Books'),
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(60),
-          child: SearchBar(),
+          preferredSize: const Size.fromHeight(40.0),
+          child: AppSearchBox(
+            controller: _controller,
+            onChange: (value) {
+              _debouncer.run(() {
+                context.read<ExploreProvider>().searchBooks(value ?? "The A");
+              });
+            },
+          ),
         ),
       ),
       body: const BookGridView(),
-    );
-  }
-}
-
-class SearchBar extends StatefulWidget {
-  @override
-  State<SearchBar> createState() => _SearchBarState();
-}
-
-class _SearchBarState extends State<SearchBar> {
-  final _debouncer = Debouncer(milliseconds: 500);
-  final _controller = TextEditingController();
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: TextField(
-        controller: _controller,
-        decoration: InputDecoration(
-          hintText: 'Search books...',
-          prefixIcon: const Icon(Icons.search),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          filled: true,
-          fillColor: Colors.white,
-        ),
-        onChanged: (value) {
-          _debouncer.run(() {
-            context.read<ExploreProvider>().searchBooks(value);
-          });
-        },
-      ),
     );
   }
 }
@@ -123,7 +102,7 @@ class _BookGridViewState extends State<BookGridView> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(provider.error!),
+                const Text("No data "),
                 ElevatedButton(
                   onPressed: provider.refreshBooks,
                   child: const Text('Retry'),
@@ -172,7 +151,12 @@ class BookCard extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: () {
-          // Navigate to book details
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => DetailBook(
+                        id: book.id,
+                      )));
         },
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -192,28 +176,28 @@ class BookCard extends StatelessWidget {
                     )
                   : const Center(child: Icon(Icons.book)),
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    book.title,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
+            Container(
+              color: AppColors.textForBG,
+              alignment: Alignment.center,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      book.title,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.bold)
                     ),
-                  ),
-                  Text(
-                    book.authors.join(', '),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 12,
+                    Text(
+                      book.authors.join(', '),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.headlineSmall!.copyWith(fontSize: 12.0)
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ],

@@ -96,14 +96,17 @@ class _DetailBookState extends State<DetailBook> {
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(20),
-            child: Image(
-                fit: BoxFit.cover,
-                image: NetworkImage(item?.imageLinks?.thumbnail ?? ""),
-                errorBuilder: (_, __, ___) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }),
+            child: Image.network(
+              item?.imageLinks?.thumbnail ?? "",
+              fit: BoxFit.cover,
+              width: double.infinity,
+              errorBuilder: (context, error, stackTrace) =>
+                  const Center(child: Icon(Icons.error)),
+              loadingBuilder: (context, child, loadingProgress) {
+                if (loadingProgress == null) return child;
+                return const Center(child: CircularProgressIndicator());
+              },
+            ),
           ),
         ),
       ],
@@ -121,7 +124,10 @@ class _DetailBookState extends State<DetailBook> {
           child: Text(
             item?.title ?? "No Name Book",
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.headlineLarge!.copyWith(fontSize: 20),
+            style: Theme.of(context)
+                .textTheme
+                .headlineLarge!
+                .copyWith(fontSize: 20),
           ),
         ),
         Text(
@@ -137,19 +143,22 @@ class _DetailBookState extends State<DetailBook> {
               item?.printType ?? "Book",
               style: Theme.of(context).textTheme.bodyLarge,
             ),
-            Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 9.0, vertical: 5.0),
-              decoration: BoxDecoration(
-                color: AppColors.black,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Text(
-                (item?.pageCount ?? 0).toVND,
-                style: Theme.of(context)
-                    .textTheme
-                    .labelLarge!
-                    .copyWith(color: AppColors.bgColor),
+            Padding(
+              padding: const EdgeInsets.only(left: 20.0),
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 9.0, vertical: 5.0),
+                decoration: BoxDecoration(
+                  color: AppColors.black,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  (item?.pageCount ?? 0).toVND,
+                  style: Theme.of(context)
+                      .textTheme
+                      .labelLarge!
+                      .copyWith(color: AppColors.bgColor),
+                ),
               ),
             ),
             Text(
@@ -168,7 +177,7 @@ class _DetailBookState extends State<DetailBook> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) =>const PdfScreen(),
+                    builder: (context) => const PdfScreen(),
                   ),
                 );
               },

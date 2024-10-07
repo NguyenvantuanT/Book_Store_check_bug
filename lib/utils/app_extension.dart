@@ -3,6 +3,8 @@ import 'package:book_app/pages/home_page.dart';
 extension StatusExt on Status {
   String get displayName {
     switch (this) {
+      case Status.fiction:
+        return 'Fiction';
       case Status.animeManga:
         return 'Anime+Manga';
       case Status.actionAdventure:
@@ -13,6 +15,20 @@ extension StatusExt on Status {
         return 'Horror';
       default:
         return '';
+    }
+  }
+  String get tabLabel {
+    switch (this) {
+      case Status.fiction:
+        return 'Fiction';
+      case Status.animeManga:
+        return 'Anime';
+      case Status.actionAdventure:
+        return 'Adventure';
+      case Status.novel:
+        return 'Novel';
+      case Status.horror:
+        return 'Horror';
     }
   }
 }

@@ -1,15 +1,33 @@
 import 'package:book_app/components/app_search_box.dart';
-import 'package:book_app/notifiers/app_status_notifier.dart';
+import 'package:book_app/notifiers/app_book_explore.dart';
 import 'package:book_app/pages/book_show/status_book.dart';
+import 'package:book_app/pages/explore_page.dart';
+import 'package:book_app/services/book_services.dart';
 import 'package:book_app/themes/app_colors.dart';
+import 'package:book_app/utils/app_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 enum Status {
+  fiction,
   animeManga,
   actionAdventure,
   novel,
   horror,
+}
+
+class HomePageP extends StatelessWidget {
+  const HomePageP({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (context) => ExploreProvider(
+        context.read<BookService>(),
+      )..loadMoreBooks(),
+      child: const HomePage(),
+    );
+  }
 }
 
 class HomePage extends StatefulWidget {
@@ -21,23 +39,26 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   late TabController tabController;
+  final _debouncer = Debouncer(milliseconds: 500);
 
   @override
   void initState() {
     super.initState();
-    tabController = TabController(length: 4, vsync: this);
-    tabController.addListener(() {
-      if (tabController.indexIsChanging) {
-        Provider.of<AppStatusNotifier>(context, listen: false)
-            .updateView(tabController.index);
-      }
-    });
+    tabController = TabController(length: Status.values.length, vsync: this);
+    tabController.addListener(_handleTabChange);
   }
 
-  @override
-  void dispose() {
-    tabController.dispose();
-    super.dispose();
+  void _handleTabChange() {
+    if (!tabController.indexIsChanging) return;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _debouncer.run(() async {
+        await context
+            .read<ExploreProvider>()
+            .setCurrentQuery(tabController.index);
+      });
+    });
   }
 
   @override
@@ -55,7 +76,9 @@ class _HomePageState extends State<HomePage>
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 20.0, vertical: 10.0),
+                    horizontal: 20.0,
+                    vertical: 10.0,
+                  ),
                   child: Text(
                     "Book Store",
                     style: Theme.of(context).textTheme.headlineLarge,
@@ -67,9 +90,12 @@ class _HomePageState extends State<HomePage>
                   flexibleSpace: const AppSearchBox()),
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 20.0).copyWith(bottom: 10.0),
-                  child: Text("Top Sellers" , style: Theme.of(context).textTheme.headlineMedium,),
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0)
+                      .copyWith(bottom: 10.0),
+                  child: Text(
+                    "Top Sellers",
+                    style: Theme.of(context).textTheme.headlineMedium,
+                  ),
                 ),
               ),
               SliverPersistentHeader(
@@ -102,14 +128,16 @@ class _HomePageState extends State<HomePage>
           },
           body: TabBarView(
             controller: tabController,
-            children: List<Widget>.generate(4, (index) => const StatusBook()),
+            children: List<Widget>.generate(
+              Status.values.length,
+              (index) => const CategoriesPage(),
+            ),
           ),
         ),
       ),
     );
   }
 }
-
 
 class MyDelegate extends SliverPersistentHeaderDelegate {
   MyDelegate({required this.tabBar});
@@ -133,33 +161,17 @@ class MyDelegate extends SliverPersistentHeaderDelegate {
   }
 }
 
-List<Widget> tab = const [
-  Tab(
-    height: 50.0,
-    child: Padding(
-      padding: EdgeInsets.symmetric(horizontal: 15.0,vertical: 10.0),
-      child: Text("Anime" , style: TextStyle(fontSize: 16.0),),
-    ),
-  ),
-  Tab(
-    height: 50.0,
-    child: Padding(
-      padding: EdgeInsets.symmetric(horizontal: 15.0,vertical: 10.0),
-      child: Text("Adventure" , style: TextStyle(fontSize: 16.0),),
-    ),
-  ),
-  Tab(
-    height: 50.0,
-    child: Padding(
-      padding: EdgeInsets.symmetric(horizontal: 15.0,vertical: 10.0),
-      child: Text("Novel" , style: TextStyle(fontSize: 16.0),),
-    ),
-  ),
-  Tab(
-    height: 50.0,
-    child: Padding(
-      padding: EdgeInsets.symmetric(horizontal: 15.0,vertical: 10.0),
-      child: Text("Horror" , style: TextStyle(fontSize: 16.0),),
-    ),
-  ),
-];
+List<Widget> tab = Status.values
+    .map(
+      (e) => Tab(
+        height: 50.0,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
+          child: Text(
+            e.tabLabel,
+            style: const TextStyle(fontSize: 16.0),
+          ),
+        ),
+      ),
+    )
+    .toList();
