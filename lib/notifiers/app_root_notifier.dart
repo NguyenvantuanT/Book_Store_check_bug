@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:book_app/pages/book_show/pdf_screen.dart';
 import 'package:book_app/pages/explore_page.dart';
 import 'package:book_app/pages/home_page.dart';
+import 'package:book_app/pages/settins_page.dart';
 import 'package:flutter/material.dart';
 
 class AppRootNotifier extends ChangeNotifier {
@@ -25,13 +25,13 @@ class AppRootNotifier extends ChangeNotifier {
       Widget page;
       switch (index) {
         case 0:
-          page = const HomePageP();
+          page = const HomePageWrapper();
           break;
         case 1:
           page = const ExploreScreen();
           break;
         case 2:
-          page = const PdfScreen();
+          page = const SettinsPage();
           break;
         default:
           page = const SizedBox();

@@ -22,7 +22,7 @@ void main() {
     ChangeNotifierProvider<AppRootNotifier>(
         create: (context) => AppRootNotifier()),
     Provider<BookService>(
-      create: (_) => BookService(),
+      create: (context) => BookService(),
       dispose: (_, value) => value.dispose(),
     ),
   ], child: const MyApp()));

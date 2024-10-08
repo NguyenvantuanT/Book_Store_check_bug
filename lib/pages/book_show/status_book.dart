@@ -98,7 +98,7 @@ class _StatusBookState extends State<StatusBook> {
                         color: AppColors.textForBG,
                         borderRadius: BorderRadius.circular(15.0)),
                     child: GestureDetector(
-                      onTap: () => _showDetail(context, book.id),
+                      onTap: () => _showDetail(context, book),
                       child: SizedBox(
                         height: size.height / 4,
                         child: Row(
@@ -121,12 +121,12 @@ class _StatusBookState extends State<StatusBook> {
         ));
   }
 
-  void _showDetail(BuildContext context, String id) {
+  void _showDetail(BuildContext context, Book book) {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => DetailBook(
-          id: id,
+          book: book,
         ),
       ),
     );

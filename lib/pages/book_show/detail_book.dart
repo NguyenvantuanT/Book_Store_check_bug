@@ -1,83 +1,61 @@
 import 'package:book_app/components/app_button.dart';
-import 'package:book_app/models/book_model.dart';
-import 'package:book_app/notifiers/app_notifier.dart';
+import 'package:book_app/models/book_exlpore._model.dart';
 import 'package:book_app/pages/book_show/pdf_screen.dart';
 import 'package:book_app/themes/app_colors.dart';
 import 'package:book_app/utils/app_extension.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:readmore/readmore.dart';
 
-class DetailBook extends StatefulWidget {
-  const DetailBook({super.key, this.id});
+class DetailBook extends StatelessWidget {
+  const DetailBook({super.key, required this.book,});
 
-  final String? id;
+  final Book book;
 
-  @override
-  State<DetailBook> createState() => _DetailBookState();
-}
-
-class _DetailBookState extends State<DetailBook> {
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: AppColors.primaryC,
-      body: Consumer<AppNotifier>(
-        builder: ((context, value, child) {
-          return widget.id != null
-              ? FutureBuilder(
-                  future: value.showBookData(id: widget.id ?? ""),
-                  builder: (context, snapshot) {
-                    final item = snapshot.data?.volumeInfo;
-                    String pathPDF =
-                        snapshot.data?.accessInfo?.pdf?.acsTokenLink ?? "";
-                    return SingleChildScrollView(
-                        child: Column(
-                      children: [
-                        Stack(
-                          children: [
-                            Container(
-                              height: height,
-                              width: width,
-                              margin: const EdgeInsets.only(top: 167),
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 20.0),
-                              decoration: BoxDecoration(
-                                  color: AppColors.bgColor,
-                                  borderRadius: const BorderRadius.only(
-                                    topLeft: Radius.circular(20.0),
-                                    topRight: Radius.circular(20.0),
-                                  )),
-                              child: Column(
-                                children: [
-                                  const SizedBox(height: 110),
-                                  _buildBody(
-                                      height, width, item, context, pathPDF),
-                                ],
-                              ),
-                            ),
-                            Positioned(
-                              top: 70.0,
-                              left: 0,
-                              right: 0,
-                              child: _buildImage(height, width, item),
-                            )
-                          ],
-                        ),
-                      ],
-                    ));
-                  })
-              : const Center(
-                  child: Text("Opps No Data Found!"),
-                );
-        }),
-      ),
+      body:
+          
+          SingleChildScrollView(
+              child: Column(
+              children: [
+                Stack(
+                  children: [
+                    Container(
+                      height: height,
+                      width: width,
+                      margin: const EdgeInsets.only(top: 167),
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                      decoration: BoxDecoration(
+                          color: AppColors.bgColor,
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(20.0),
+                            topRight: Radius.circular(20.0),
+                          )),
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 110),
+                          _buildBody(height, width, book, context),
+                        ],
+                      ),
+                    ),
+                    Positioned(
+                      top: 70.0,
+                      left: 0,
+                      right: 0,
+                      child: _buildImage(height, width, book),
+                    )
+                  ],
+                ),
+              ],
+            )),
     );
   }
 
-  Widget _buildImage(double height, double width, VolumeInfo? item) {
+  Widget _buildImage(double height, double width, Book book) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -97,7 +75,7 @@ class _DetailBookState extends State<DetailBook> {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(20),
             child: Image.network(
-              item?.imageLinks?.thumbnail ?? "",
+              book.thumbnailUrl ,
               fit: BoxFit.cover,
               width: double.infinity,
               errorBuilder: (context, error, stackTrace) =>
@@ -113,8 +91,8 @@ class _DetailBookState extends State<DetailBook> {
     );
   }
 
-  Widget _buildBody(double height, double width, VolumeInfo? item,
-      BuildContext context, String pathPDF) {
+  Widget _buildBody(double height, double width,Book book,
+      BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -122,7 +100,7 @@ class _DetailBookState extends State<DetailBook> {
         SizedBox(
           width: double.infinity,
           child: Text(
-            item?.title ?? "No Name Book",
+            book.title ,
             textAlign: TextAlign.center,
             style: Theme.of(context)
                 .textTheme
@@ -131,7 +109,7 @@ class _DetailBookState extends State<DetailBook> {
           ),
         ),
         Text(
-          (item?.authors?[0] ?? "Censored").toUpperCase(),
+          (book.authors[0] ).toUpperCase(),
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.headlineMedium,
         ),
@@ -140,7 +118,7 @@ class _DetailBookState extends State<DetailBook> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Text(
-              item?.printType ?? "Book",
+              "Book",
               style: Theme.of(context).textTheme.bodyLarge,
             ),
             Padding(
@@ -153,7 +131,7 @@ class _DetailBookState extends State<DetailBook> {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  (item?.pageCount ?? 0).toVND,
+                  (book.pageCount).toVND,
                   style: Theme.of(context)
                       .textTheme
                       .labelLarge!
@@ -162,7 +140,7 @@ class _DetailBookState extends State<DetailBook> {
               ),
             ),
             Text(
-              "${item?.pageCount ?? 0} pages",
+              "${book.pageCount} pages",
               style: Theme.of(context).textTheme.bodyLarge,
             ),
           ],
@@ -192,10 +170,10 @@ class _DetailBookState extends State<DetailBook> {
           ],
         ),
         _buildTitle(context, "Details"),
-        _showDoc(context, item),
+        _showDoc(context, book),
         _buildTitle(context, "Description"),
         ReadMoreText(
-          item?.description ?? "No Description",
+         book.description,
           trimLines: 6,
           colorClickableText: AppColors.black,
           trimMode: TrimMode.Line,
@@ -210,7 +188,7 @@ class _DetailBookState extends State<DetailBook> {
     );
   }
 
-  Widget _showDoc(BuildContext context, VolumeInfo? item) {
+  Widget _showDoc(BuildContext context, Book book) {
     return Row(
       children: [
         Expanded(
@@ -256,7 +234,7 @@ class _DetailBookState extends State<DetailBook> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                item?.authors?[0] ?? "No Auhtor Value",
+                book.authors[0],
                 maxLines: 1,
                 style: Theme.of(context)
                     .textTheme
@@ -264,7 +242,7 @@ class _DetailBookState extends State<DetailBook> {
                     .copyWith(fontSize: 16.0, color: AppColors.grey),
               ),
               Text(
-                item?.publisher ?? "No Publisher",
+                book.id ,
                 maxLines: 1,
                 style: Theme.of(context)
                     .textTheme
@@ -272,7 +250,7 @@ class _DetailBookState extends State<DetailBook> {
                     .copyWith(fontSize: 16.0, color: AppColors.grey),
               ),
               Text(
-                item?.publishedDate ?? "No Publisher Data",
+                book.previewLink,
                 maxLines: 1,
                 style: Theme.of(context)
                     .textTheme
@@ -280,7 +258,7 @@ class _DetailBookState extends State<DetailBook> {
                     .copyWith(fontSize: 16.0, color: AppColors.grey),
               ),
               Text(
-                item?.categories?[0] ?? "No Categories",
+                book.title,
                 maxLines: 1,
                 style: Theme.of(context)
                     .textTheme

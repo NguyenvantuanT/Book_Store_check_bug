@@ -155,7 +155,7 @@ class BookCard extends StatelessWidget {
               context,
               MaterialPageRoute(
                   builder: (context) => DetailBook(
-                        id: book.id,
+                        book: book,
                       )));
         },
         child: Column(
