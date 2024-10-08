@@ -1,6 +1,7 @@
 import 'package:book_app/notifiers/app_notifier.dart';
 import 'package:book_app/notifiers/app_pdf_notifier.dart';
 import 'package:book_app/notifiers/app_root_notifier.dart';
+import 'package:book_app/notifiers/app_setting_notifier.dart';
 import 'package:book_app/pages/root_page.dart';
 import 'package:book_app/services/book_services.dart';
 import 'package:book_app/themes/app_colors.dart';
@@ -17,6 +18,7 @@ void main() {
   ));
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider<AppNotifier>(create: (context) => AppNotifier()),
+    ChangeNotifierProvider<AppSettingNotifier>(create: (context) => AppSettingNotifier()),
     ChangeNotifierProvider<AppPdfNotifier>(
         create: (context) => AppPdfNotifier()),
     ChangeNotifierProvider<AppRootNotifier>(

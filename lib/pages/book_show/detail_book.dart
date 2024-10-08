@@ -1,13 +1,18 @@
 import 'package:book_app/components/app_button.dart';
 import 'package:book_app/models/book_exlpore._model.dart';
+import 'package:book_app/notifiers/app_setting_notifier.dart';
 import 'package:book_app/pages/book_show/pdf_screen.dart';
 import 'package:book_app/themes/app_colors.dart';
 import 'package:book_app/utils/app_extension.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:readmore/readmore.dart';
 
 class DetailBook extends StatelessWidget {
-  const DetailBook({super.key, required this.book,});
+  const DetailBook({
+    super.key,
+    required this.book,
+  });
 
   final Book book;
 
@@ -17,41 +22,39 @@ class DetailBook extends StatelessWidget {
     double width = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: AppColors.primaryC,
-      body:
-          
-          SingleChildScrollView(
-              child: Column(
-              children: [
-                Stack(
+      body: SingleChildScrollView(
+          child: Column(
+        children: [
+          Stack(
+            children: [
+              Container(
+                height: height,
+                width: width,
+                margin: const EdgeInsets.only(top: 167),
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                decoration: BoxDecoration(
+                    color: AppColors.bgColor,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(20.0),
+                      topRight: Radius.circular(20.0),
+                    )),
+                child: Column(
                   children: [
-                    Container(
-                      height: height,
-                      width: width,
-                      margin: const EdgeInsets.only(top: 167),
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                      decoration: BoxDecoration(
-                          color: AppColors.bgColor,
-                          borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(20.0),
-                            topRight: Radius.circular(20.0),
-                          )),
-                      child: Column(
-                        children: [
-                          const SizedBox(height: 110),
-                          _buildBody(height, width, book, context),
-                        ],
-                      ),
-                    ),
-                    Positioned(
-                      top: 70.0,
-                      left: 0,
-                      right: 0,
-                      child: _buildImage(height, width, book),
-                    )
+                    const SizedBox(height: 110),
+                    _buildBody(height, width, book, context),
                   ],
                 ),
-              ],
-            )),
+              ),
+              Positioned(
+                top: 70.0,
+                left: 0,
+                right: 0,
+                child: _buildImage(height, width, book),
+              )
+            ],
+          ),
+        ],
+      )),
     );
   }
 
@@ -75,7 +78,7 @@ class DetailBook extends StatelessWidget {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(20),
             child: Image.network(
-              book.thumbnailUrl ,
+              book.thumbnailUrl,
               fit: BoxFit.cover,
               width: double.infinity,
               errorBuilder: (context, error, stackTrace) =>
@@ -91,8 +94,8 @@ class DetailBook extends StatelessWidget {
     );
   }
 
-  Widget _buildBody(double height, double width,Book book,
-      BuildContext context) {
+  Widget _buildBody(
+      double height, double width, Book book, BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -100,7 +103,7 @@ class DetailBook extends StatelessWidget {
         SizedBox(
           width: double.infinity,
           child: Text(
-            book.title ,
+            book.title,
             textAlign: TextAlign.center,
             style: Theme.of(context)
                 .textTheme
@@ -109,7 +112,7 @@ class DetailBook extends StatelessWidget {
           ),
         ),
         Text(
-          (book.authors[0] ).toUpperCase(),
+          (book.authors[0]).toUpperCase(),
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.headlineMedium,
         ),
@@ -166,6 +169,7 @@ class DetailBook extends StatelessWidget {
                 color: AppColors.black,
               ),
               text: "WISHLIST",
+              onTap: () => Provider.of<AppSettingNotifier>(context,listen: false).addTofavoriteBook(book),
             ),
           ],
         ),
@@ -173,15 +177,16 @@ class DetailBook extends StatelessWidget {
         _showDoc(context, book),
         _buildTitle(context, "Description"),
         ReadMoreText(
-         book.description,
-          trimLines: 6,
+          book.description,
+          trimLines: 4,
           colorClickableText: AppColors.black,
           trimMode: TrimMode.Line,
           trimCollapsedText: '...Read More',
-          style: Theme.of(context)
-              .textTheme
-              .titleLarge
-              ?.copyWith(fontSize: 15, color: AppColors.grey),
+          style: TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w400,
+            color: AppColors.textColor,
+          ),
           trimExpandedText: ' Less',
         ),
       ],
@@ -242,7 +247,7 @@ class DetailBook extends StatelessWidget {
                     .copyWith(fontSize: 16.0, color: AppColors.grey),
               ),
               Text(
-                book.id ,
+                book.publisher,
                 maxLines: 1,
                 style: Theme.of(context)
                     .textTheme
@@ -250,7 +255,7 @@ class DetailBook extends StatelessWidget {
                     .copyWith(fontSize: 16.0, color: AppColors.grey),
               ),
               Text(
-                book.previewLink,
+                book.publishedDate,
                 maxLines: 1,
                 style: Theme.of(context)
                     .textTheme
@@ -258,7 +263,7 @@ class DetailBook extends StatelessWidget {
                     .copyWith(fontSize: 16.0, color: AppColors.grey),
               ),
               Text(
-                book.title,
+                book.categories[0],
                 maxLines: 1,
                 style: Theme.of(context)
                     .textTheme
@@ -281,7 +286,7 @@ class DetailBook extends StatelessWidget {
           title,
           style: Theme.of(context)
               .textTheme
-              .displayLarge!
+              .headlineMedium!
               .copyWith(fontSize: 18.0),
         ),
       ),

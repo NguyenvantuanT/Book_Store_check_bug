@@ -1,3 +1,4 @@
+import 'package:book_app/pages/setting_page/favourite_page.dart';
 import 'package:book_app/themes/app_colors.dart';
 import 'package:flutter/material.dart';
 
@@ -18,7 +19,7 @@ class _SettinsPageState extends State<SettinsPage> {
       {
         'icon': Icons.favorite_outline,
         'title': 'Favorites',
-        // 'function': () => _pushPage(const FavoritesRoute()),
+        'function': () => _pushPage(const FavouritePage()),
       },
       {
         'icon': Icons.download,
@@ -59,15 +60,20 @@ class _SettinsPageState extends State<SettinsPage> {
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: items.length,
-            separatorBuilder: (BuildContext context, int index) => SizedBox(),
+            separatorBuilder: (BuildContext context, int index) => const SizedBox(),
             itemBuilder: (context, index) => ListTile(
               title: Text(items[index]["title"]),
               leading: Icon(items[index]["icon"]),
-              onTap: () {},
+              onTap: items[index]["function"],
             ),
           )
         ],
       ),
     );
+  }
+
+
+  void _pushPage(Widget page){
+    Navigator.push(context, MaterialPageRoute(builder: (context) => page));
   }
 }
